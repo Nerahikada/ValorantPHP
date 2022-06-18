@@ -11,7 +11,7 @@ use Ramsey\Uuid\UuidInterface;
 class MatchResult
 {
     private UuidInterface $id;
-    private UuidInterface $mapId;
+    private string $mapId;
     private UuidInterface $seasonId;
     private DateTimeImmutable $startTime;
     private Rank $newRank;
@@ -23,7 +23,7 @@ class MatchResult
     public function __construct(array $data)
     {
         $this->id = Uuid::fromString($data["MatchID"]);
-        $this->mapId = Uuid::fromString($data["MapID"]);
+        $this->mapId = $data["MapID"];
         $this->seasonId = Uuid::fromString($data["SeasonID"]);
         $this->startTime = new DateTimeImmutable("@{$data["MatchStartTime"]}");
         $this->newRank = new Rank($data["TierAfterUpdate"], $data["RankedRatingAfterUpdate"]);
@@ -38,7 +38,7 @@ class MatchResult
         return $this->id;
     }
 
-    public function getMapId(): UuidInterface
+    public function getMapId(): string
     {
         return $this->mapId;
     }
