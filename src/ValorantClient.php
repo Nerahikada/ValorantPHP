@@ -7,6 +7,7 @@ namespace Nerahikada\ValorantPHP;
 use DateInterval;
 use DateTimeImmutable;
 use Nerahikada\ValorantPHP\Endpoint\Model\Account;
+use Nerahikada\ValorantPHP\Endpoint\Model\AccountXp;
 use Nerahikada\ValorantPHP\Endpoint\Model\MatchResult;
 use Nerahikada\ValorantPHP\Endpoint\Model\Session;
 use Nerahikada\ValorantPHP\Exception\AuthenticationFailureException;
@@ -133,5 +134,14 @@ class ValorantClient extends CurlClient
         $puuid = $this->getAccount()->getUuid();
         $response = $this->get("https://pd.$region.a.pvp.net/personalization/v2/players/$puuid/playerloadout");
         return json_decode($response, true);    // TODO: create model
+    }
+
+    public function fetchAccountXp() : AccountXp{
+        $this->reauth();
+
+        $region = $this->region;
+        $puuid = $this->getAccount()->getUuid();
+        $response = $this->get("https://pd.$region.a.pvp.net/account-xp/v1/players/$puuid");
+        return new AccountXp(json_decode($response, true));
     }
 }
