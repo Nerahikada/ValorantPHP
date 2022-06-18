@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Nerahikada\ValorantPHP\Endpoint\Model;
 
 use DateTimeImmutable;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 class MatchResult
 {
-    private string $id;
-    private string $mapId;
-    private string $seasonId;
+    private UuidInterface $id;
+    private UuidInterface $mapId;
+    private UuidInterface $seasonId;
     private DateTimeImmutable $startTime;
     private Rank $newRank;
     private Rank $oldRank;
@@ -20,9 +22,9 @@ class MatchResult
 
     public function __construct(array $data)
     {
-        $this->id = $data["MatchID"];
-        $this->mapId = $data["MapID"];
-        $this->seasonId = $data["SeasonID"];
+        $this->id = Uuid::fromString($data["MatchID"]);
+        $this->mapId = Uuid::fromString($data["MapID"]);
+        $this->seasonId = Uuid::fromString($data["SeasonID"]);
         $this->startTime = new DateTimeImmutable("@{$data["MatchStartTime"]}");
         $this->newRank = new Rank($data["TierAfterUpdate"], $data["RankedRatingAfterUpdate"]);
         $this->oldRank = new Rank($data["TierBeforeUpdate"], $data["RankedRatingBeforeUpdate"]);
@@ -31,17 +33,17 @@ class MatchResult
         $this->afkPenalty = $data["AFKPenalty"];
     }
 
-    public function getId(): string
+    public function getId(): UuidInterface
     {
         return $this->id;
     }
 
-    public function getMapId(): string
+    public function getMapId(): UuidInterface
     {
         return $this->mapId;
     }
 
-    public function getSeasonId(): string
+    public function getSeasonId(): UuidInterface
     {
         return $this->seasonId;
     }

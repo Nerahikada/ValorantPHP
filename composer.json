@@ -13,5 +13,7 @@
             "email": "hkshirorom@yahoo.co.jp"
         }
     ],
-    "require": {}
+    "require": {
+        "ramsey/uuid": "^4.3"
+    }
 }

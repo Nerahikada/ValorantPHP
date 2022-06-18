@@ -7,14 +7,16 @@ namespace Nerahikada\ValorantPHP\Endpoint\Model;
 use DateTimeImmutable;
 use Nerahikada\ValorantPHP\Endpoint\Enum\ConnectionState;
 use Nerahikada\ValorantPHP\Endpoint\Enum\LoopState;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 
 class Session
 {
     private ConnectionState $connectionState;
-    private string $clientId;
+    private UuidInterface $clientId;
     private string $clientVersion;
     private LoopState $loopState;
-    private string $loopStateMetadata;    // (pre-)match ID?
+    private ?UuidInterface $loopStateMetadata;    // (pre-)match ID?
     private DateTimeImmutable $lastHeartbeatTime;
     private int $playtimeMinutes;
     private array $clientPlatformInfo;    // TODO: create model
@@ -22,10 +24,10 @@ class Session
     public function __construct(array $data)
     {
         $this->connectionState = ConnectionState::from($data["cxnState"]);
-        $this->clientId = $data["clientID"];
+        $this->clientId = Uuid::fromString($data["clientID"]);
         $this->clientVersion = $data["clientVersion"];
         $this->loopState = LoopState::from($data["loopState"]);
-        $this->loopStateMetadata = $data["loopStateMetadata"];
+        $this->loopStateMetadata = empty($metadata = $data["loopStateMetadata"]) ? null : Uuid::fromString($metadata);
         $this->lastHeartbeatTime = new DateTimeImmutable($data["lastHeartbeatTime"]);
         $this->playtimeMinutes = $data["playtimeMinutes"];
         $this->clientPlatformInfo = $data["clientPlatformInfo"];
@@ -36,7 +38,7 @@ class Session
         return $this->connectionState;
     }
 
-    public function getClientId(): string
+    public function getClientId(): UuidInterface
     {
         return $this->clientId;
     }
@@ -51,7 +53,7 @@ class Session
         return $this->loopState;
     }
 
-    public function getLoopStateMetadata(): string
+    public function getLoopStateMetadata(): UuidInterface
     {
         return $this->loopStateMetadata;
     }
