@@ -19,7 +19,7 @@ class Session
     private ?UuidInterface $loopStateMetadata;    // (pre-)match ID?
     private DateTimeImmutable $lastHeartbeatTime;
     private int $playtimeMinutes;
-    private array $clientPlatformInfo;    // TODO: create model
+    private PlatformInfo $clientPlatformInfo;
 
     public function __construct(array $data)
     {
@@ -30,7 +30,7 @@ class Session
         $this->loopStateMetadata = empty($metadata = $data["loopStateMetadata"]) ? null : Uuid::fromString($metadata);
         $this->lastHeartbeatTime = new DateTimeImmutable($data["lastHeartbeatTime"]);
         $this->playtimeMinutes = $data["playtimeMinutes"];
-        $this->clientPlatformInfo = $data["clientPlatformInfo"];
+        $this->clientPlatformInfo = new PlatformInfo($data["clientPlatformInfo"]);
     }
 
     public function getConnectionState(): ConnectionState
@@ -68,7 +68,7 @@ class Session
         return $this->playtimeMinutes;
     }
 
-    public function getClientPlatformInfo(): array
+    public function getClientPlatformInfo(): PlatformInfo
     {
         return $this->clientPlatformInfo;
     }
