@@ -1,0 +1,17 @@
+{
+    "name": "nerahikada/valorantphp",
+    "type": "library",
+    "license": "GPL-3.0",
+    "autoload": {
+        "psr-4": {
+            "Nerahikada\\ValorantPHP\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Nerahikada",
+            "email": "hkshirorom@yahoo.co.jp"
+        }
+    ],
+    "require": {}
+}
