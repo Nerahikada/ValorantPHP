@@ -15,4 +15,14 @@ class AccountXp
         // TODO:
         //$history = array_reverse($data["History"]);
     }
+
+    public function getLevel(): int
+    {
+        return $this->level;
+    }
+
+    public function getXp(): int
+    {
+        return $this->xp;
+    }
 }
