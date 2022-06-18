@@ -9,6 +9,7 @@ use DateTimeImmutable;
 use Nerahikada\ValorantPHP\Endpoint\Model\Account;
 use Nerahikada\ValorantPHP\Endpoint\Model\MatchResult;
 use Nerahikada\ValorantPHP\Endpoint\Model\Session;
+use Nerahikada\ValorantPHP\Exception\AuthenticationFailureException;
 use Nerahikada\ValorantPHP\Exception\CurlRequestFailedException;
 use Nerahikada\ValorantPHP\Utils\CurlClient;
 
@@ -42,8 +43,11 @@ class ValorantClient extends CurlClient
         ]);
 
         $response = json_decode($response, true);
-        if ($response["type"] !== "response") return false;    // 2FA is not supported
-        $response = $response["response"];
+        $response = match ($response["type"]) {
+            "response" => $response["response"],
+            "multifactor" => throw new AuthenticationFailureException("2FA Authentication is not supported"),
+            "auth" => throw new AuthenticationFailureException($response["error"]),
+        };
 
         parse_str(parse_url($response["parameters"]["uri"])[$response["mode"]], $result);
         $this->expiredAt = (new DateTimeImmutable())->add(new DateInterval("PT{$result["expires_in"]}S"));
