@@ -12,7 +12,7 @@ class MatchResult
 {
     private UuidInterface $id;
     private string $mapId;
-    private UuidInterface $seasonId;
+    private ?UuidInterface $seasonId;
     private DateTimeImmutable $startTime;
     private Rank $newRank;
     private Rank $oldRank;
@@ -24,7 +24,7 @@ class MatchResult
     {
         $this->id = Uuid::fromString($data["MatchID"]);
         $this->mapId = $data["MapID"];
-        $this->seasonId = Uuid::fromString($data["SeasonID"]);
+        $this->seasonId = empty($season = $data["SeasonID"]) ? null : Uuid::fromString($season);
         $this->startTime = new DateTimeImmutable("@{$data["MatchStartTime"]}");
         $this->newRank = new Rank($data["TierAfterUpdate"], $data["RankedRatingAfterUpdate"]);
         $this->oldRank = new Rank($data["TierBeforeUpdate"], $data["RankedRatingBeforeUpdate"]);
@@ -43,7 +43,7 @@ class MatchResult
         return $this->mapId;
     }
 
-    public function getSeasonId(): UuidInterface
+    public function getSeasonId(): ?UuidInterface
     {
         return $this->seasonId;
     }
