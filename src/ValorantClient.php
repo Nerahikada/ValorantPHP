@@ -85,7 +85,7 @@ class ValorantClient extends CurlClient
 
     private function reauth(): void
     {
-        if (new DateTimeImmutable() < $this->expiredAt) return;
+        if ((new DateTimeImmutable())->add(new DateInterval("PT10S")) < $this->expiredAt) return;
 
         try {
             $this->get("https://auth.riotgames.com/authorize", [
