@@ -12,6 +12,7 @@ use Nerahikada\ValorantPHP\Endpoint\Model\MatchResult;
 use Nerahikada\ValorantPHP\Endpoint\Model\Session;
 use Nerahikada\ValorantPHP\Exception\AuthenticationFailureException;
 use Nerahikada\ValorantPHP\Exception\CurlRequestFailedException;
+use Nerahikada\ValorantPHP\Exception\UnderMaintenanceException;
 use Nerahikada\ValorantPHP\Utils\CurlClient;
 
 class ValorantClient extends CurlClient
@@ -78,6 +79,7 @@ class ValorantClient extends CurlClient
             $response = $this->get("https://glz-$region-1.$region.a.pvp.net/session/v1/sessions/$puuid");
         } catch (CurlRequestFailedException $exception) {
             if ($exception->getCode() === 404) return null;
+            $this->checkMaintenance($exception);
             throw $exception;
         }
         return new Session(json_decode($response, true));
@@ -110,6 +112,16 @@ class ValorantClient extends CurlClient
         return $this->account;
     }
 
+    public function checkMaintenance(CurlRequestFailedException $exception): void
+    {
+        $response = json_decode($exception->getMessage());
+        if (is_array($response)) {
+            if (isset($data["errorCode"]) && $data["errorCode"] === "SCHEDULED_DOWNTIME") {
+                throw new UnderMaintenanceException($data["message"]);
+            }
+        }
+    }
+
     /**
      * @return MatchResult[]
      */
@@ -119,10 +131,15 @@ class ValorantClient extends CurlClient
 
         $region = $this->region;
         $puuid = $this->getAccount()->getUuid();
-        $response = $this->get("https://pd.$region.a.pvp.net/mmr/v1/players/$puuid/competitiveupdates", [
-            "endIndex" => $count,
-            "queue" => $game,
-        ]);
+        try {
+            $response = $this->get("https://pd.$region.a.pvp.net/mmr/v1/players/$puuid/competitiveupdates", [
+                "endIndex" => $count,
+                "queue" => $game,
+            ]);
+        } catch (CurlRequestFailedException $exception) {
+            $this->checkMaintenance($exception);
+            throw $exception;
+        }
         return array_map(fn(array $data) => new MatchResult($data), json_decode($response, true)["Matches"]);
     }
 
@@ -132,16 +149,27 @@ class ValorantClient extends CurlClient
 
         $region = $this->region;
         $puuid = $this->getAccount()->getUuid();
-        $response = $this->get("https://pd.$region.a.pvp.net/personalization/v2/players/$puuid/playerloadout");
+        try {
+            $response = $this->get("https://pd.$region.a.pvp.net/personalization/v2/players/$puuid/playerloadout");
+        } catch (CurlRequestFailedException $exception) {
+            $this->checkMaintenance($exception);
+            throw $exception;
+        }
         return json_decode($response, true);    // TODO: create model
     }
 
-    public function fetchAccountXp() : AccountXp{
+    public function fetchAccountXp(): AccountXp
+    {
         $this->reauth();
 
         $region = $this->region;
         $puuid = $this->getAccount()->getUuid();
-        $response = $this->get("https://pd.$region.a.pvp.net/account-xp/v1/players/$puuid");
+        try {
+            $response = $this->get("https://pd.$region.a.pvp.net/account-xp/v1/players/$puuid");
+        } catch (CurlRequestFailedException $exception) {
+            $this->checkMaintenance($exception);
+            throw $exception;
+        }
         return new AccountXp(json_decode($response, true));
     }
 }
