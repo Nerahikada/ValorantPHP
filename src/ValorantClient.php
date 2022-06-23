@@ -172,4 +172,19 @@ class ValorantClient extends CurlClient
         }
         return new AccountXp(json_decode($response, true));
     }
+
+    public function fetchMmr():array{
+        $this->reauth();
+
+        $region = $this->region;
+        $puuid = $this->getAccount()->getUuid();
+        try {
+            $response = $this->get("https://pd.$region.a.pvp.net/mmr/v1/players/$puuid");
+        }catch(CurlRequestFailedException $exception){
+            $this->checkMaintenance($exception);
+            throw $exception;
+        }
+        // TODO: create model
+        return json_decode($response, true);
+    }
 }
