@@ -196,7 +196,9 @@ class ValorantClient extends CurlClient
         $region = $this->region;
         $puuid = $this->getAccount()->getUuid()->toString();
         try {
+            $this->addHeader("X-Riot-ClientVersion", $this->fetchSession()->getClientVersion());
             $response = $this->get("https://glz-$region-1.$region.a.pvp.net/parties/v1/players/$puuid");
+            $this->removeHeader("X-Riot-ClientVersion");
             $id = json_decode($response, true)["CurrentPartyID"];
             $response = $this->get("https://glz-$region-1.$region.a.pvp.net/parties/v1/parties/$id");
         } catch (CurlRequestFailedException $exception) {
