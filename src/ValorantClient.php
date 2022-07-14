@@ -188,4 +188,22 @@ class ValorantClient extends CurlClient
         // TODO: create model
         return json_decode($response, true);
     }
+
+    public function fetchParty(): array
+    {
+        $this->reauth();
+
+        $region = $this->region;
+        $puuid = $this->getAccount()->getUuid()->toString();
+        try {
+            $response = $this->get("https://glz-$region-1.$region.a.pvp.net/parties/v1/players/$puuid");
+            $id = json_decode($response, true)["CurrentPartyID"];
+            $response = $this->get("https://glz-$region-1.$region.a.pvp.net/parties/v1/parties/$id");
+        } catch (CurlRequestFailedException $exception) {
+            $this->checkMaintenance($exception);
+            throw $exception;
+        }
+        // TODO: create model
+        return json_decode($response, true);
+    }
 }
