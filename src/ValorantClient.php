@@ -219,6 +219,6 @@ class ValorantClient extends CurlClient
             throw $exception;
         }
         // TODO: create model
-        return json_decode($response, true);
+        return json_decode($response, true)["Penalties"];
     }
 }
