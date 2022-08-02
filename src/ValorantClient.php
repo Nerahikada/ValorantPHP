@@ -208,4 +208,17 @@ class ValorantClient extends CurlClient
         // TODO: create model
         return json_decode($response, true);
     }
+
+    public function fetchPenalties(): array
+    {
+        $this->reauth();
+        try {
+            $response = $this->get("https://pd.$this->region.a.pvp.net/restrictions/v3/penalties");
+        } catch (CurlRequestFailedException $exception) {
+            $this->checkMaintenance($exception);
+            throw $exception;
+        }
+        // TODO: create model
+        return json_decode($response, true);
+    }
 }
