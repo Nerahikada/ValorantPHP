@@ -69,20 +69,25 @@ class ValorantClient extends CurlClient
         return true;
     }
 
-    public function fetchSession(): ?Session
+    /**
+     * @return MatchResult[]
+     */
+    public function fetchMatches(int $count = 1, string $game = "competitive"): array
     {
         $this->reauth();
 
         $region = $this->region;
         $puuid = $this->getAccount()->getUuid();
         try {
-            $response = $this->get("https://glz-$region-1.$region.a.pvp.net/session/v1/sessions/$puuid");
+            $response = $this->get("https://pd.$region.a.pvp.net/mmr/v1/players/$puuid/competitiveupdates", [
+                "endIndex" => $count,
+                "queue" => $game,
+            ]);
         } catch (CurlRequestFailedException $exception) {
-            if ($exception->getCode() === 404) return null;
             $this->checkMaintenance($exception);
             throw $exception;
         }
-        return new Session(json_decode($response, true));
+        return array_map(fn(array $data) => new MatchResult($data), json_decode($response, true)["Matches"]);
     }
 
     private function reauth(): void
@@ -120,27 +125,6 @@ class ValorantClient extends CurlClient
                 throw new UnderMaintenanceException($data["message"]);
             }
         }
-    }
-
-    /**
-     * @return MatchResult[]
-     */
-    public function fetchMatches(int $count = 1, string $game = "competitive"): array
-    {
-        $this->reauth();
-
-        $region = $this->region;
-        $puuid = $this->getAccount()->getUuid();
-        try {
-            $response = $this->get("https://pd.$region.a.pvp.net/mmr/v1/players/$puuid/competitiveupdates", [
-                "endIndex" => $count,
-                "queue" => $game,
-            ]);
-        } catch (CurlRequestFailedException $exception) {
-            $this->checkMaintenance($exception);
-            throw $exception;
-        }
-        return array_map(fn(array $data) => new MatchResult($data), json_decode($response, true)["Matches"]);
     }
 
     public function fetchLoadout(): array
@@ -207,6 +191,22 @@ class ValorantClient extends CurlClient
         }
         // TODO: create model
         return json_decode($response, true);
+    }
+
+    public function fetchSession(): ?Session
+    {
+        $this->reauth();
+
+        $region = $this->region;
+        $puuid = $this->getAccount()->getUuid();
+        try {
+            $response = $this->get("https://glz-$region-1.$region.a.pvp.net/session/v1/sessions/$puuid");
+        } catch (CurlRequestFailedException $exception) {
+            if ($exception->getCode() === 404) return null;
+            $this->checkMaintenance($exception);
+            throw $exception;
+        }
+        return new Session(json_decode($response, true));
     }
 
     public function fetchPenalties(): array
