@@ -49,7 +49,7 @@ class CurlClient
         return $this->sendRequest("POST", $url, ["Content-Type: application/json"]);
     }
 
-    private function sendRequest(string $method, string $url, array $headers = []): bool|string
+    final protected function sendRequest(string $method, string $url, array $headers = []): bool|string
     {
         foreach ($this->headers as $key => $value) $headers[] = "$key: $value";
 
