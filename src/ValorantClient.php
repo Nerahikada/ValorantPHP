@@ -24,7 +24,7 @@ class ValorantClient extends CurlClient
     public function __construct()
     {
         parent::__construct(true);
-        $this->setUserAgent("RiotClient/58.0.0.4640299.4552318 rso-auth (Windows;10;;Professional, x64)");
+        $this->setUserAgent("RiotClient/60.0.7.4773490 rso-auth (Windows;10;;Professional, x64)");
     }
 
     public function login(string $username, string $password): bool
