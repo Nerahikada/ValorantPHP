@@ -9,7 +9,7 @@ use Nerahikada\ValorantPHP\Exception\CurlRequestFailedException;
 
 class CurlClient
 {
-    private CurlHandle $curlHandle;
+    protected CurlHandle $curlHandle;
     private /*resource*/ $tmpCookie;
 
     /** @var string[] */

@@ -13,9 +13,9 @@ use Nerahikada\ValorantPHP\Endpoint\Model\Session;
 use Nerahikada\ValorantPHP\Exception\AuthenticationFailureException;
 use Nerahikada\ValorantPHP\Exception\CurlRequestFailedException;
 use Nerahikada\ValorantPHP\Exception\UnderMaintenanceException;
-use Nerahikada\ValorantPHP\Utils\CurlClient;
+use Nerahikada\ValorantPHP\Utils\CfCurlClient;
 
-class ValorantClient extends CurlClient
+class ValorantClient extends CfCurlClient
 {
     private DateTimeImmutable $expiredAt;
     private string $region;
