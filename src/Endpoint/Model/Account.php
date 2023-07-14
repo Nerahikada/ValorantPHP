@@ -18,6 +18,8 @@ class Account
     private string $tagLine;
     private string $country;
     private string $locale;
+    /** @var Restriction[] */
+    private array $restrictions;
 
     public function __construct(array $data)
     {
@@ -28,6 +30,7 @@ class Account
         $this->tagLine = $data["acct"]["tag_line"];
         $this->country = $data["country"];
         $this->locale = $data["player_locale"];
+        $this->restrictions = array_map(fn($array) => new Restriction($array), $data["ban"]["restrictions"]);
     }
 
     public function getState(): AccountState
@@ -63,5 +66,13 @@ class Account
     public function getLocale(): string
     {
         return $this->locale;
+    }
+
+    /**
+     * @return Restriction[]
+     */
+    public function getRestrictions(): array
+    {
+        return $this->restrictions;
     }
 }

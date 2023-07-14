@@ -14,6 +14,7 @@ use Nerahikada\ValorantPHP\Exception\AuthenticationFailureException;
 use Nerahikada\ValorantPHP\Exception\CurlRequestFailedException;
 use Nerahikada\ValorantPHP\Exception\UnderMaintenanceException;
 use Nerahikada\ValorantPHP\Utils\CfCurlClient;
+use Nerahikada\ValorantPHP\Utils\Random;
 
 class ValorantClient extends CfCurlClient
 {
@@ -30,11 +31,11 @@ class ValorantClient extends CfCurlClient
     public function login(string $username, string $password): bool
     {
         $this->postJson("https://auth.riotgames.com/api/v1/authorization", [
-            "client_id" => "play-valorant-web-prod",
+            "client_id" => "riot-client",
             "response_type" => "token id_token",
-            "redirect_uri" => "https://playvalorant.com/opt_in",
-            "scope" => "account openid",
-            "nonce" => "1",
+            "redirect_uri" => "http://localhost/redirect",
+            "scope" => "account ban openid",
+            "nonce" => Random::string(22),
         ]);
 
         $response = $this->putJson("https://auth.riotgames.com/api/v1/authorization", [
