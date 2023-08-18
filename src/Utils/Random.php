@@ -8,7 +8,7 @@ class Random
     {
         $str = "";
         for ($i = 0; $i < $length; ++$i) {
-            $str .= "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[random_int(0, 62)];
+            $str .= "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"[random_int(0, 61)];
         }
         return $str;
     }
