@@ -25,7 +25,7 @@ class ValorantClient extends CfCurlClient
     public function __construct()
     {
         parent::__construct(true);
-        $this->setUserAgent("RiotClient/69.0.3.2281352 rso-auth (Windows;10;;Professional, x64)");
+        $this->setUserAgent("ShooterGame/12 Windows/10.0.64bit");
     }
 
     public function login(string $username, string $password): bool
